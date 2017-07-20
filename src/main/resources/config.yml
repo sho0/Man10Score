@@ -1,0 +1,16 @@
+mysql:
+  host: localhost
+  port: 3306
+  user: root
+  pass: password
+  db: mat
+settings:
+ prefix: '&e[&bMan10Score&e]&f'
+ thank_point_amount: 1
+ thank_cooltime: 82800
+ thank_broadcast_enabled: true
+ thank_broadcast_message: '%PREFIX%&d%NAMEFROM%&aさんは、&d%NAMETO%&aに感謝しました。&d%NAMETO%&aは%POINTS%ポイントゲット (現在:%CURRENT%）'
+ score_take_broadcast_enabled: true
+ score_take_message: '%PREFIX%&c%NAMETO%さんは、%NAMEFROM%さんから『%REASON%』の理由で%POINTS%ポイント剥奪されました'
+ score_give_broadcast_enabled: true
+ score_give_message: '%PREFIX%&a%NAMETO%さんは、%NAMEFROM%さんから『%REASON%』の理由で%POINTS%ポイント表彰されました'

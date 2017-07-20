@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Man10PlayerDataArchive">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../spigot/plugins/Man10PlayerDataArchive.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../spigot/plugins/Man10MysqlApi.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

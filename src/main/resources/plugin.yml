@@ -1,0 +1,9 @@
+name: Man10Score
+version: ${project.version}
+main: red.man10.man10score.Man10Score
+softdepend: [Man10MySQLAPI,Man10PlayerDataArchive]
+authors: [Sho0]
+description: Man10ScorePlugin
+commands:
+ thank:
+ mscore:
