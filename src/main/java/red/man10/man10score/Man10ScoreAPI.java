@@ -74,7 +74,7 @@ public class Man10ScoreAPI {
         }
         int i = createMan10Score(name,uuid,nameTo,uuidTo,value,reason,"Give");
         if(score_give_broadcast_enabled){
-            Bukkit.broadcastMessage(score_give_message.replaceAll("&","§").replaceAll("%PREFIX%",prefix).replaceAll("%NAMEFROM%",name).replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(thank_point_amount)).replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo))).replaceAll("%REASON%",reason));
+            Bukkit.broadcastMessage(score_give_message.replaceAll("&","§").replaceAll("%PREFIX%",prefix).replaceAll("%NAMEFROM%",name).replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(value)).replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo))).replaceAll("%REASON%",reason));
         }
         return 0;
     }
@@ -88,7 +88,7 @@ public class Man10ScoreAPI {
         }
         int i = createMan10Score(name,uuid,nameTo,uuidTo,-value,reason,"Take");
         if(score_take_broadcast_enabled){
-            Bukkit.broadcastMessage(score_take_message.replaceAll("&","§").replaceAll("%PREFIX%",prefix).replaceAll("%NAMEFROM%",name).replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(thank_point_amount)).replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo))).replaceAll("%REASON%",reason));
+            Bukkit.broadcastMessage(score_take_message.replaceAll("&","§").replaceAll("%PREFIX%",prefix).replaceAll("%NAMEFROM%",name).replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(value)).replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo))).replaceAll("%REASON%",reason));
         }
         return i;
     }
@@ -136,5 +136,27 @@ public class Man10ScoreAPI {
         return 1;
     }
 
+
+    public int silentGiveMan10Score(String name, UUID uuid, String nameTo, UUID uuidTo, long value, String reason) {
+        if (value == 0L) {
+            return 1;
+        }
+        if (value < 0L) {
+            return 2;
+        }
+        int i = createMan10Score(name, uuid, nameTo, uuidTo, value, reason, "Give");
+        return 0;
+    }
+
+    public int silentTakeMan10Score(String name, UUID uuid, String nameTo, UUID uuidTo, long value, String reason) {
+        if (value == 0L) {
+            return 1;
+        }
+        if (value < 0L) {
+            return 2;
+        }
+        int i = createMan10Score(name, uuid, nameTo, uuidTo, -value, reason, "Take");
+        return i;
+    }
 
 }

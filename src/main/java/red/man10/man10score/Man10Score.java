@@ -4,17 +4,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import red.man10.Man10PlayerDataArchive.Man10PlayerData;
 import red.man10.Man10PlayerDataArchive.Man10PlayerDataArchiveAPI;
 import red.man10.man10mysqlapi.MySQLAPI;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public final class Man10Score extends JavaPlugin {
+public final class Man10Score extends JavaPlugin implements Listener {
     Man10ScoreAPI api = null;
     MySQLAPI mysql = null;
     Man10PlayerDataArchiveAPI pda = null;
@@ -27,6 +32,7 @@ public final class Man10Score extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         this.saveDefaultConfig();
+        Bukkit.getPluginManager().registerEvents(this,this);
         mysql = new MySQLAPI(this,"Man10Score");
         mysql.execute(createScoreLog);
         api = new Man10ScoreAPI();
@@ -45,6 +51,10 @@ public final class Man10Score extends JavaPlugin {
     }
 
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e){
+        e.setJoinMessage("§e" + e.getPlayer().getName() + "さんがログインしました。現在: " + api.getMan10Score(e.getPlayer().getUniqueId()) + " ポイント");
+    }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(command.getName().equalsIgnoreCase("thank")){
@@ -54,10 +64,13 @@ public final class Man10Score extends JavaPlugin {
             }
             Player send = (Player) sender;
             Player p = Bukkit.getPlayer(args[0]);
+            if(send.getName().equals(p.getName())){
+                send.sendMessage(prefix + "自分には感謝できません");
+                return false;
+            }
             int i = api.thankPlayer(send.getName(),send.getUniqueId(),p.getName(),p.getUniqueId());
             if(i == 2){
                 long futureTimePoint = api.getLastThank(send.getUniqueId()) + thank_coolTime;
-                long timeUnltillFutureTimePoint = futureTimePoint - System.currentTimeMillis()/1000;
                 Date time = new Date();
                 time.setTime(futureTimePoint*1000);
                 send.sendMessage(prefix + "現在クールダウン中です、次のThankは" + time + "です");
@@ -66,10 +79,31 @@ public final class Man10Score extends JavaPlugin {
         }
         if(command.getName().equalsIgnoreCase("mscore")){
             if(args.length == 0){
-                help(sender);
+                Player p = (Player)sender;
+                sender.sendMessage(this.prefix + "詳細情報:  http://man10.red/u?" + p.getName());
+                sender.sendMessage(this.prefix + "ランキング: http://man10.red/score_ranking/");
+                sender.sendMessage(this.prefix + "他人のスコアや詳細情報 /user <name>");
+                sender.sendMessage(this.prefix + "現在のMan10 Score:" + this.api.getMan10Score(p.getUniqueId()));
                 return true;
             }
             if(args.length == 1){
+                if (args[0].equalsIgnoreCase("ranking")) {
+                    ResultSet rs = this.mysql.query("SELECT name,man10_score FROM pda_player_data ORDER BY man10_score DESC LIMIT 15;");
+                    try {
+                        int i = 1;
+                        sender.sendMessage("§6§l==========[Man10 Score]==========");
+                        while (rs.next()) {
+                            sender.sendMessage("§6§l" + i + ". " + rs.getString("name") + " : §d§l" + rs.getLong("man10_score"));
+                            i++;
+                        }
+                        sender.sendMessage("§eさらに詳細なランキング: http://man10.red/score_ranking/");
+                        rs.close();
+                        mysql.close();
+                    }
+                    catch (SQLException e){
+                        e.printStackTrace();
+                    }
+                }
                 if(args[0].equalsIgnoreCase("help")){
                     help(sender);
                     return true;
