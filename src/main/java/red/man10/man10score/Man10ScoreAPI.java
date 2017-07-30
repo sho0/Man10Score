@@ -88,7 +88,10 @@ public class Man10ScoreAPI {
         }
         int i = createMan10Score(name,uuid,nameTo,uuidTo,-value,reason,"Take");
         if(score_take_broadcast_enabled){
-            Bukkit.broadcastMessage(score_take_message.replaceAll("&","§").replaceAll("%PREFIX%",prefix).replaceAll("%NAMEFROM%",name).replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(value)).replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo))).replaceAll("%REASON%",reason));
+            String message = score_take_message;
+            message = message.replaceAll("&","§").replaceAll("%PREFIX%",prefix).replaceAll("%NAMEFROM%",name).replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(value)).replaceAll("%REASON%",reason);
+            message = message.replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo)));
+            Bukkit.broadcastMessage(message);
         }
         return i;
     }
@@ -157,6 +160,11 @@ public class Man10ScoreAPI {
         }
         int i = createMan10Score(name, uuid, nameTo, uuidTo, -value, reason, "Take");
         return i;
+    }
+
+    public int fuckPlayer(String name, UUID uuid, String nameTo, UUID uuidTo,String reason) {
+        int i = createMan10Score(name, uuid, nameTo, uuidTo, 0, reason, "Fuck");
+        return 0;
     }
 
 }

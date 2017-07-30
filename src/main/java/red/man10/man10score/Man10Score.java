@@ -77,6 +77,32 @@ public final class Man10Score extends JavaPlugin implements Listener {
                 return false;
             }
         }
+        if(command.getName().equalsIgnoreCase("fuck")){
+            if(args.length == 0){
+                sender.sendMessage(prefix + "コマンドの使い方が間違っています/fuck <名前>");
+                return false;
+            }
+            if(sender instanceof Player == false){
+                sender.sendMessage(prefix + "fuckはコンソールにはできません");
+                return false;
+            }
+            Player fucked = Bukkit.getPlayer(pda.getUUIDFromName(args[0]));
+            if(fucked == null && args[0].equals("me") == false){
+                sender.sendMessage(prefix + "プレイヤーがオフラインです");
+                return false;
+            }
+            Player fucking = (Player) sender;
+            if(api.getMan10Score(fucking.getUniqueId()) < 5){
+                fucking.sendMessage(prefix + "スコアが足りません");
+                return false;
+            }
+            if(args[0].equals("me") || fucked.getName().equals(fucking.getName())){
+                api.takeMan10Score(fucking.getName(),fucking.getUniqueId(),fucking.getName(),fucking.getUniqueId(),5,fucking.getName() + "は自分にF**Kと言った");
+                return false;
+            }
+            api.fuckPlayer(fucking.getName(),fucking.getUniqueId(),fucked.getName(),fucked.getUniqueId(),fucking.getName() + "は" + fucked.getName() + "にF**Kと言った");
+            api.takeMan10Score(fucking.getName(),fucking.getUniqueId(),fucking.getName(),fucking.getUniqueId(),5,fucking.getName() + "は" + fucked.getName() + "にF**Kと言った");
+        }
         if(command.getName().equalsIgnoreCase("mscore") || command.getName().equalsIgnoreCase("score")){
             if(args.length == 0){
                 Player p = (Player)sender;
@@ -125,11 +151,12 @@ public final class Man10Score extends JavaPlugin implements Listener {
                         sender.sendMessage(prefix + "あなたには権限がありません");
                         return false;
                     }
-                    if(pda.getUUIDFromNameMysql(args[1]) == null){
+                    UUID uuidd = pda.getUUIDFromName(args[1]);
+                    if(uuidd == null){
                         sender.sendMessage(prefix + "プレイヤーが存在しません");
                         return false;
                     }
-                    Man10PlayerData pd = pda.getPlayerData(pda.getUUIDFromName(args[1]));
+                    Man10PlayerData pd = pda.getPlayerData(uuidd);
                     String name = "";
                     UUID uuid = null;
                     if(sender instanceof Player){
@@ -151,17 +178,17 @@ public final class Man10Score extends JavaPlugin implements Listener {
                         return false;
                     }
                 }
-
                 if(args[0].equalsIgnoreCase("take")){
                     if(!sender.hasPermission("man10.score.take")){
                         sender.sendMessage(prefix + "あなたには権限がありません");
                         return false;
                     }
-                    if(pda.getUUIDFromNameMysql(args[1]) == null){
+                    UUID uuidd = pda.getUUIDFromName(args[1]);
+                    if(uuidd == null){
                         sender.sendMessage(prefix + "プレイヤーが存在しません");
                         return false;
                     }
-                    Man10PlayerData pd = pda.getPlayerData(pda.getUUIDFromName(args[1]));
+                    Man10PlayerData pd = pda.getPlayerData(uuidd);
                     String name = "";
                     UUID uuid = null;
                     if(sender instanceof Player){
