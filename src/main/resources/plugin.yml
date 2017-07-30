@@ -7,3 +7,4 @@ description: Man10ScorePlugin
 commands:
  thank:
  mscore:
+ score:

@@ -77,7 +77,7 @@ public final class Man10Score extends JavaPlugin implements Listener {
                 return false;
             }
         }
-        if(command.getName().equalsIgnoreCase("mscore")){
+        if(command.getName().equalsIgnoreCase("mscore") || command.getName().equalsIgnoreCase("score")){
             if(args.length == 0){
                 Player p = (Player)sender;
                 sender.sendMessage(this.prefix + "詳細情報:  http://man10.red/u?" + p.getName());
