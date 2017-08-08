@@ -72,9 +72,18 @@ public class Man10ScoreAPI {
         if(value < 0){
             return 2;
         }
-        int i = createMan10Score(name,uuid,nameTo,uuidTo,value,reason,"Give");
-        if(score_give_broadcast_enabled){
-            Bukkit.broadcastMessage(score_give_message.replaceAll("&","§").replaceAll("%PREFIX%",prefix).replaceAll("%NAMEFROM%",name).replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(value)).replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo))).replaceAll("%REASON%",reason));
+        createMan10Score(name,uuid,nameTo,uuidTo,value,reason,"Give");
+        if(score_give_broadcast_enabled) {
+            String message = score_give_message;
+            message = message.replaceAll("%REASON%",reason);
+            message = message.replaceAll("%POINTS%", String.valueOf(value));
+            message = message.replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(value)).replaceAll("%REASON%",reason);
+            message = message.replaceAll("%NAMEFROM%",name);
+            message = message.replaceAll("%PREFIX%",prefix);
+            message = message.replaceAll("&","§");
+            message = message.replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo)));
+
+            Bukkit.broadcastMessage(message);
         }
         return 0;
     }
@@ -86,25 +95,45 @@ public class Man10ScoreAPI {
         if(value < 0){
             return 2;
         }
-        int i = createMan10Score(name,uuid,nameTo,uuidTo,-value,reason,"Take");
+        createMan10Score(name,uuid,nameTo,uuidTo,-value,reason,"Take");
         if(score_take_broadcast_enabled){
             String message = score_take_message;
-            message = message.replaceAll("&","§").replaceAll("%PREFIX%",prefix).replaceAll("%NAMEFROM%",name).replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(value)).replaceAll("%REASON%",reason);
+            if(score_take_message == null){
+            }
+
+            message = message.replaceAll("%REASON%",reason);
+
+            message = message.replaceAll("%POINTS%", String.valueOf(value));
+
+            message = message.replaceAll("%NAMETO%",nameTo).replaceAll("%POINTS%", String.valueOf(value)).replaceAll("%REASON%",reason);
+
+            message = message.replaceAll("%NAMEFROM%",name);
+
+            message = message.replaceAll("%PREFIX%",prefix);
+
+            message = message.replaceAll("&","§");
+
             message = message.replaceAll("%CURRENT%", String.valueOf(getMan10Score(uuidTo)));
             Bukkit.broadcastMessage(message);
         }
-        return i;
+        return 0;
     }
 
-    int createMan10Score(String name,UUID uuid,String nameTo,UUID uuidTo,long value,String reason,String tag){
-        Man10PlayerData pd = pda.getPlayerData(uuidTo);
-        pd.man10Score = pd.man10Score + value;
-        boolean b = mysql.execute("INSERT INTO man10_score_log VALUES('0','" + name + "','" + uuid + "','" + nameTo + "','" + uuidTo + "','" + value + "','" + reason + "','" + tag + "','" + pda.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "');");
-        pda.updatePlayerDataToMysql(uuidTo,pd);
-        if(b){
-            return 0;
+    void createMan10Score(String name,UUID uuid,String nameTo,UUID uuidTo,long value,String reason,String tag){
+        ResultSet rs = mysql.query("SELECT man10_score FROM pda_player_data WHERE uuid ='" + uuidTo + "'");
+        long v = 0;
+        try {
+            while (rs.next()){
+                v = rs.getLong("man10_score");
+            }
+            rs.close();
+            mysql.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return 1;
+        long res = v + value;
+        mysql.execute("UPDATE pda_player_data SET man10_score ='" + res + "' WHERE uuid ='" + uuidTo + "'");
+        mysql.execute("INSERT INTO man10_score_log VALUES('0','" + name + "','" + uuid + "','" + nameTo + "','" + uuidTo + "','" + value + "','" + reason + "','" + tag + "','" + pda.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "');");
     }
 
     public long getLastThank(UUID uuid){
@@ -147,7 +176,7 @@ public class Man10ScoreAPI {
         if (value < 0L) {
             return 2;
         }
-        int i = createMan10Score(name, uuid, nameTo, uuidTo, value, reason, "Give");
+        createMan10Score(name, uuid, nameTo, uuidTo, value, reason, "Give");
         return 0;
     }
 
@@ -158,12 +187,12 @@ public class Man10ScoreAPI {
         if (value < 0L) {
             return 2;
         }
-        int i = createMan10Score(name, uuid, nameTo, uuidTo, -value, reason, "Take");
-        return i;
+         createMan10Score(name, uuid, nameTo, uuidTo, -value, reason, "Take");
+        return 0;
     }
 
     public int fuckPlayer(String name, UUID uuid, String nameTo, UUID uuidTo,String reason) {
-        int i = createMan10Score(name, uuid, nameTo, uuidTo, 0, reason, "Fuck");
+        createMan10Score(name, uuid, nameTo, uuidTo, 0, reason, "Fuck");
         return 0;
     }
 

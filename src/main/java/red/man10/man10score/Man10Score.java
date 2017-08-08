@@ -37,7 +37,7 @@ public final class Man10Score extends JavaPlugin implements Listener {
         mysql.execute(createScoreLog);
         api = new Man10ScoreAPI();
         loadSettingsToMemory();
-        pda = new Man10PlayerDataArchiveAPI(mysql);
+        pda = new Man10PlayerDataArchiveAPI();
         thank_coolTime = getConfig().getLong("settings.thank_cooltime");
     }
 
@@ -189,6 +189,8 @@ public final class Man10Score extends JavaPlugin implements Listener {
                         return false;
                     }
                     Man10PlayerData pd = pda.getPlayerData(uuidd);
+                    if(pd == null){
+                    }
                     String name = "";
                     UUID uuid = null;
                     if(sender instanceof Player){
