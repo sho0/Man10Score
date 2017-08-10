@@ -134,6 +134,7 @@ public class Man10ScoreAPI {
         long res = v + value;
         mysql.execute("UPDATE pda_player_data SET man10_score ='" + res + "' WHERE uuid ='" + uuidTo + "'");
         mysql.execute("INSERT INTO man10_score_log VALUES('0','" + name + "','" + uuid + "','" + nameTo + "','" + uuidTo + "','" + value + "','" + reason + "','" + tag + "','" + pda.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "');");
+        pda.updatePlayerDataToMysql(uuidTo,pda.getPlayerDataFromMysql(uuidTo));
     }
 
     public long getLastThank(UUID uuid){
